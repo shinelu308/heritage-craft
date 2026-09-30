@@ -128,7 +128,7 @@ let project = 0, route = 'overview', pointIndex = 0, template = '城市漫游',
     activeCert = 0, currentStyle = 'jade', filter = '全部', toastTimer = null;
 
 let states = PROJECTS.map((p, i) => ({
-  checks:[], reward:false, draft:null, orders:[],
+  checks:[], reward:false, draft:null, orders:[], logs:[],
   works:[
     {id:`W${i+1}001`, title:i?'让竹编走进今天':'一针一线，绣进江南',
      text:i?'经纬之间，藏着手艺的温度。让传统竹编成为桌面上的日常风景。':'一针一线，绣进江南。\n把细腻的丝线与轻盈的日常相连，在街巷里寻找属于自己的东方色彩。',
@@ -144,6 +144,12 @@ const S = () => states[project];
 const P = () => PROJECTS[project];
 
 /* ---------- 基础工具 ---------- */
+function logAct(type, text){
+  const s = S(); if (!s.logs) s.logs = [];
+  const d = new Date(), pad = x => String(x).padStart(2,'0');
+  s.logs.unshift({ type, text, time: pad(d.getMonth()+1) + '-' + pad(d.getDate()) + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds()) });
+  if (s.logs.length > 40) s.logs.length = 40;
+}
 function toast(text){
   const el = $('#toast');
   el.textContent = text; el.hidden = false;
@@ -514,6 +520,7 @@ function scanPoint(){
 function completeScan(i){
   if (S().checks.includes(i)) return;
   S().checks.push(i);
+  logAct('点位打卡', '完成「' + P().crafts[i] + '」点位打卡，已集 ' + S().checks.length + '/3 枚印章');
   closeModal(); render();
   modal('印章已点亮', `
     <div class="success-mark">✓</div>
@@ -528,7 +535,9 @@ function completeScan(i){
 function claimReward(){
   const s = S();
   if (s.checks.length !== 3 || s.reward) return;
-  s.reward = true; render();
+  s.reward = true;
+  logAct('成就解锁', '集齐 3 枚数字印章，领取「非遗新潮体验官」漫游纪念徽章');
+  render();
   modal('漫游成就已解锁', `
     <div class="achievement">非遗<br>新潮<br>体验官</div>
     <p style="text-align:center;margin:22px 0;line-height:1.9">你已完成全部点位探索，<br>获得本项目数字纪念徽章。</p>
@@ -799,9 +808,11 @@ function transitionWork(next, reason){
     if (!text){ toast('作品内容不能为空'); return; }
     w.text = text;
   }
+  const prevStatus = w.status;
   w.status = next;
   if (reason) w.reason = reason;
   if (next === '已发布' && !w.cert) w.cert = makeCert(w, project);
+  logAct('审核流转', '《' + w.title + '》' + prevStatus + ' → ' + next + (reason ? '（' + reason + '）' : ''));
   closeModal(); render();
   toast(next === '已发布' ? '作品已发布，并完成链上存证' : '作品已更新为' + next);
 }
@@ -873,8 +884,11 @@ function opsPanel(){
         : '<div class="empty"><h3>暂无预售订单</h3><p>在好物预售中完成一笔模拟订单，即可在此查看。</p><a class="btn" href="#crowd">前往好物预售</a></div>');
   }
   if (opsTab === 'logs'){
-    return `<div class="panel-head"><h3>操作记录</h3><span class="meta">当前会话</span></div>
-      <div class="timeline">${s.logs.map(l => `<div><b>${l.text}</b><p class="meta" style="margin-top:5px">${l.type} · ${l.time}</p></div>`).join('')}</div>`;
+    const logs = s.logs || [];
+    return `<div class="panel-head"><h3>操作记录</h3><span class="meta">当前会话 · ${logs.length} 条</span></div>` +
+      (logs.length
+        ? `<div class="timeline">${logs.map(l => `<div><b>${esc(l.text)}</b><p class="meta" style="margin-top:5px">${esc(l.type)} · ${esc(l.time)}</p></div>`).join('')}</div>`
+        : '<div class="empty" style="padding:40px 16px"><h3>暂无操作记录</h3><p>审核流转、点位打卡、支持下单等操作会实时记录在这里。</p></div>');
   }
   return `<div class="panel-head"><h3>作品审核</h3>
       <div style="display:flex;gap:8px;flex-wrap:wrap">${['全部','待审核','已批准','已发布','草稿','已退回'].map(f => `<button class="tag ${filter === f ? 'jade' : 'gray'}" style="cursor:pointer" onclick="setFilter('${f}')">${f}</button>`).join('')}</div>
@@ -977,7 +991,9 @@ function viewCrowd(){
 function pickTier(i){ selectedTier = i; render(); }
 function placeOrder(){
   const t = TIERS[selectedTier], s = S();
-  s.orders.unshift({no:'OPC' + Date.now().toString().slice(-9), tier:t.name, amount:t.price, time:new Date().toLocaleString('zh-CN', {hour12:false})});
+  const no = 'OPC' + Date.now().toString().slice(-9);
+  s.orders.unshift({no, tier:t.name, amount:t.price, time:new Date().toLocaleString('zh-CN', {hour12:false})});
+  logAct('文创支持', '支持「' + t.name + '」¥' + t.price.toLocaleString('zh-CN') + '，订单 ' + no);
   render();
   modal('支持成功', `<div class="success-mark">✓</div>
     <h3 style="text-align:center;font-size:17px">已支持「${t.name}」</h3>
