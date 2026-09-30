@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>非遗·造物 · 数字平台 · 交互演示</title>
+<meta name="description" content="非遗·造物 数字平台交互演示 —— 宣纸金框 · 文物正典。覆盖项目总览、非遗寻宝、国潮共创、好物预售、数字藏品与运营工作台。">
+<meta name="theme-color" content="#f4efe4">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='%23f4efe4'/%3E%3Crect x='4' y='4' width='32' height='32' fill='none' stroke='%23b8985a' stroke-width='2'/%3E%3Cpath d='M13 13h14v14H13z' fill='none' stroke='%23a8322d' stroke-width='2.4'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="heritage-craft.css?v=hc1">
+</head>
+<body>
+
+<!-- 顶栏 -->
+<header class="topnav">
+  <div class="nav-inner">
+    <a class="brand" href="#overview">
+      <span class="mk">印</span>
+      <span>
+        <b>非遗·造物</b>
+        <small>Intangible Heritage · Craft</small>
+      </span>
+    </a>
+    <nav class="navlinks" id="navlinks"></nav>
+    <div class="nav-right">
+      <label class="proj-switch">
+        <span>项目</span>
+        <select id="proj-select" aria-label="切换项目">
+          <option value="0">江南非遗文化季</option>
+          <option value="1">东方新潮创意园</option>
+        </select>
+      </label>
+      <button class="menu-btn" id="menu-btn" aria-label="打开菜单">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="app"></main>
+
+<!-- 底栏 -->
+<footer class="foot">
+  <div class="foot-inner">
+    <div class="foot-b">
+      <div class="brand">
+        <span class="mk">印</span>
+        <span><b>非遗·造物</b><small>Intangible Heritage · Craft</small></span>
+      </div>
+      <p>让老手艺与新生活相遇。以数字化方式，把散落的老手艺重新带回日常 —— 可寻、可创、可支持、可留存。</p>
+    </div>
+    <div class="foot-col">
+      <h4>体验路径</h4>
+      <a href="#experience">体验中心</a>
+      <a href="#ar">非遗寻宝 · 漫游线</a>
+      <a href="#ai">国潮共创 · 工作室</a>
+      <a href="#crowd">好物预售 · 文创支持</a>
+    </div>
+    <div class="foot-col">
+      <h4>运营与资产</h4>
+      <a href="#gallery">项目作品墙</a>
+      <a href="#operations">运营工作台</a>
+      <a href="#config">项目配置</a>
+    </div>
+  </div>
+  <div class="foot-bar">
+    <div class="zh">非遗 · 文化 · 数字 · 未来</div>
+    <div class="en">Intangible Cultural Heritage × Digital Collection × Blockchain</div>
+  </div>
+</footer>
+
+<dialog id="modal"></dialog>
+<div class="toast" id="toast" hidden></div>
+
+<script src="app.js?v=hc1"></script>
+</body>
+</html>
